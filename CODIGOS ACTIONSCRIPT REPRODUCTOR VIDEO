@@ -1,0 +1,66 @@
+CODIGO PARA EL DOCUMENTO XML
+
+<?xml version="1.0" encoding="UTF-8"?>
+<lista>
+<video>jirafa.flv</video>
+<video>kiwi.flv</video>
+<video>sifuerasgay.flv</video>
+</lista>
+
+El archivo se debe guardar con el nombre de: lista.xml
+
+************************************************************
+
+NOMBRES DE LAS INSTANCIAS PARA 
+
+Componente Media player: player
+Componente List:   lista
+
+************************************************************
+
+CODIGO ACTIONSCRIPT PARA EL FOTOGRAMA 1 DE LA CAPA 2
+
+// código en línea de tiempo principal
+// ajustes iniciales
+System.useCodepage = true;
+// evitamos problemas con los nodos en blanco
+XML.prototype.ignoreWhite = true;
+// defino un estilo global para los componentes
+_global.style.setStyle("fontSize", 10);
+// en este array almacenaré las canciones
+var array_temp:Array = new Array();
+//Cargamos el XML
+var lista_video:XML = new XML();
+lista_video.ignoreWhite = true;
+lista_video.load("lista.xml");
+lista_video.onLoad = function(success){
+video = lista_video.firstChild;
+total_videos= lista_video.firstChild.childNodes.length;
+//Creamos y llenamos la lista
+listado_crear();
+//Creamos el reproductor de video
+
+}
+//Funcion crear lista, carga el contenido del objeto XML lista_video en el componente lista
+function listado_crear(){
+//Llenamos la lista con las lista_video
+var datoslista:Array = new Array();
+lista.dataProvider = datoslista;
+for (var i=0; i<total_videos; i++) {
+datoslista.addItem({label: video.childNodes[i].firstChild, data: video.childNodes[i].firstChild}); 
+trace(video.childNodes[i].firstChild)
+}
+}
+/*Listener o detector de el evento de cambio de un video, es decir, cuando seleccionamos un 
+nuevo video de la lista se ejecutara la funcion Cambiar */
+
+lista.addEventListener("change",cambiar);
+
+/*Cuando cambiamos la canción seleccionada en la lista, cargamos el nuevo video
+ y ejecutamos*/
+function cambiar (evento){
+if (evento.type == "change"){
+player.setMedia("videos/"+lista.selectedItem.data, "FLV");
+player.play();
+}
+};
