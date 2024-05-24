@@ -1,0 +1,83 @@
+CODIGO PARA EL ARCHIVO XML
+
+<?xml version='1.0' ?>
+<exploracion carpeta='mp3'>
+<archivo nombre='rihanna - only one girl in the world.mp3' />
+<archivo nombre='beyonce - halo.mp3' />
+<archivo nombre='Alanis Morrisette - You Oughta Know Acoustic.mp3' />
+<archivo nombre='rolita.mp3' />
+<archivo </exploracion>
+
+El archivo se debe guardar con el nombre de:  miLista.xml
+
+
+*******************************************************************
+
+NOMBRES DE INSTANCIAS
+
+componente media playback:  controlador
+componente list:  temas_list
+
+*******************************************************************
+
+CODIGO ACTIONSCRIPT PARA EL COMPONENTE LIST:
+
+on (change) {
+	_root.cargarMP3(this.selectedIndex);
+}
+
+*******************************************************************
+
+CODIGO ACTIONSCRIPT PARA EL PRIMER FOTOGRAMA DE LA SEGUNDA CAPA
+
+// código en línea de tiempo principal
+// ajustes iniciales
+System.useCodepage = true;
+// evitamos problemas con los nodos en blanco
+XML.prototype.ignoreWhite = true;
+// defino un estilo global para los componentes
+_global.style.setStyle("fontSize", 10);
+// en este array almacenaré las canciones
+var array_temp:Array = new Array();
+// objeto XML que carga la lista de archivos
+var lista_xml:XML = new XML();
+lista_xml.onLoad = cargarLista;
+// vuelco el contenido del XML
+// en el componente lista
+function cargarLista():Void {
+	array_temp = this.firstChild.childNodes;
+	if (!isNaN(array_temp.length)) {
+		// numero de temas
+		titulo_lb.text = array_temp.length+" temas";
+		// relleno la lista
+		for (var k:Number = 0; array_temp[k]; k++) {
+			temas_list.addItem(array_temp[k].attributes.nombre);
+		}
+		// carga la primera canción
+		cargarMP3(0);
+	}
+}
+// con esta función cargo el mp3 dentro del
+// componente mediaplayback
+function cargarMP3(indice:Number):Void {
+	controlador.setMedia("mp3/"+array_temp[indice].attributes.nombre, "MP3");
+	controlador.play(0);
+}
+// rutinas para pasar a la siguiente canción
+// cuando termine la actual
+var listenerObject:Object = new Object();
+listenerObject.complete = function(eventObj:Object) {
+	_root.tema_actual++;
+	if (_root.tema_actual>=array_temp.length) {
+		_root.tema_actual = 0;
+	}
+	cargarMP3(_root.tema_actual);
+};
+controlador.addEventListener("complete", listenerObject);
+// cargo la lista de reproducción
+lista_xml.load("miLista.xml");
+// esta línea sería del tipo
+// lista_xml.load("miLista.xml");
+// si empleo un archivo de texto
+// plano con formato XML
+
